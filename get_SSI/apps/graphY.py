@@ -3,7 +3,7 @@ import os
 import sys
 # Add the parent directory of mypackage to the Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from apps.get_data_Q import *
+from apps.get_data_Y import *
 from app import app
 from app import server
 
@@ -36,48 +36,48 @@ def get_price(ticker):
 def add_data(ticker):
     ticker = ticker.upper()
     try:
-        x = get_data_Q(ticker)
+        x = get_data_Y(ticker)
         return x
     except:
         print('Có lỗi, xin nhập mã khác')
 
 layout = html.Div(children=[
-    html.Header(children='Graph công ty thường Quý', className='ml-4',
+    html.Header(children='Graph công ty thường Năm', className='ml-4',
                 style={'font-size': '30px', 'font-weight': 'bold', 'font-family': 'Arial', 'text-align': 'center'}),
     html.Div(children='''Chọn mã CK và nhấn Enter:''', className='ml-4', style={'font-size': '20px'}),
     dcc.Input(id='input', value='VNM', type='text', debounce=True, className='ml-4'),
     html.Br(),
     html.Br(),
-    dbc.Container(id='price-SQLQ',className='six columns',
+    dbc.Container(id='price-SQLY',className='six columns',
                  style={'width': '30%', 'display': 'inline-block','margin-left':'5px'}),
-    html.Div(id='intermediate-valueSQLQ', style={'display': 'none'}),
+    html.Div(id='intermediate-valueSQLY', style={'display': 'none'}),
     html.Div([
-        html.Div([dcc.Graph(id='output-graph1SQLQ')], className='six columns',
+        html.Div([dcc.Graph(id='output-graph1SQLY')], className='six columns',
                  style={'width': '50%', 'display': 'inline-block'}),
-        html.Div([dcc.Graph(id='output-graph2SQLQ')], className='six columns',
+        html.Div([dcc.Graph(id='output-graph2SQLY')], className='six columns',
                  style={'width': '50%', 'display': 'inline-block'}),
     ], className='row'),
     html.Div([
-        html.Div([dcc.Graph(id='output-graph3SQLQ')], className='six columns',
+        html.Div([dcc.Graph(id='output-graph3SQLY')], className='six columns',
                  style={'width': '50%', 'display': 'inline-block'}),
-        html.Div([dcc.Graph(id='output-graph4SQLQ')], className='six columns',
-                 style={'width': '50%', 'display': 'inline-block'}),
-    ], className='row'),
-    html.Div([
-        html.Div([dcc.Graph(id='output-graph5SQLQ')], className='six columns',
-                 style={'width': '50%', 'display': 'inline-block'}),
-        html.Div([dcc.Graph(id='output-graph6SQLQ')], className='six columns',
+        html.Div([dcc.Graph(id='output-graph4SQLY')], className='six columns',
                  style={'width': '50%', 'display': 'inline-block'}),
     ], className='row'),
     html.Div([
-        html.Div([dcc.Graph(id='output-graph7SQLQ')], className='six columns',
+        html.Div([dcc.Graph(id='output-graph5SQLY')], className='six columns',
                  style={'width': '50%', 'display': 'inline-block'}),
-        html.Div([dcc.Graph(id='output-graph8SQLQ')], className='six columns',
+        html.Div([dcc.Graph(id='output-graph6SQLY')], className='six columns',
+                 style={'width': '50%', 'display': 'inline-block'}),
+    ], className='row'),
+    html.Div([
+        html.Div([dcc.Graph(id='output-graph7SQLY')], className='six columns',
+                 style={'width': '50%', 'display': 'inline-block'}),
+        html.Div([dcc.Graph(id='output-graph8SQLY')], className='six columns',
                  style={'width': '50%', 'display': 'inline-block'}),
     ], className='row')
 ])
 
-@app.callback(Output('price-SQLQ', 'children'),
+@app.callback(Output('price-SQLY', 'children'),
               [Input(component_id='input', component_property='value')])
 def display_price(ticker):
     price = get_price(ticker)
@@ -86,15 +86,15 @@ def display_price(ticker):
     alert = dbc.Alert(text,dismissable=False,is_open=True,color="success")
     return alert
 
-@app.callback(Output('intermediate-valueSQLQ', 'children'), [Input(component_id='input', component_property='value')])
+@app.callback(Output('intermediate-valueSQLY', 'children'), [Input(component_id='input', component_property='value')])
 def clean_data(ticker):
-    dfQ = add_data(ticker)
-    return dfQ.write_json(row_oriented=True)
+    dfY = add_data(ticker)
+    return dfY.write_json(row_oriented=True)
 
 
 @app.callback(
-    Output(component_id='output-graph1SQLQ', component_property='figure'),
-    [Input(component_id='intermediate-valueSQLQ', component_property='children')]
+    Output(component_id='output-graph1SQLY', component_property='figure'),
+    [Input(component_id='intermediate-valueSQLY', component_property='children')]
 )
 def profit(dat):
     chart = pl.from_pandas(pd.read_json(dat))
@@ -109,7 +109,7 @@ def profit(dat):
                    marker=dict(color=('teal')))
     data_set = [test, test2, test3, test4]
     fig = go.Figure(data=data_set,layout=dict(title='Doanh thu và tỷ suất LN',
-                           xaxis=dict(tickformat='%Y-%b', showgrid=False),
+                           xaxis=dict(tickformat='%Y', showgrid=False),
                            yaxis=go.layout.YAxis(  # hoverformat = '.1f'
                            )
                            , yaxis2=go.layout.YAxis(tickformat='.1%', gridwidth=3, showgrid=False,
@@ -121,16 +121,16 @@ def profit(dat):
                         paper_bgcolor= 'rgba(0, 0, 0, 0)')
 
 @app.callback(
-    Output(component_id='output-graph2SQLQ', component_property='figure'),
-    [Input(component_id='intermediate-valueSQLQ', component_property='children')]
+    Output(component_id='output-graph2SQLY', component_property='figure'),
+    [Input(component_id='intermediate-valueSQLY', component_property='children')]
 )
 def roae(dat):
     chart = pl.from_pandas(pd.read_json(dat))
     date = chart.select(pl.col("dates")).to_series()
 
-    test1 = go.Scatter(y=chart.select(pl.col("roe_4Q")).to_series(), x=date, name="roe", yaxis='y2',
+    test1 = go.Scatter(y=chart.select(pl.col("roe")).to_series(), x=date, name="roe", yaxis='y2',
                        line=dict(color='red', width=3), mode='lines')
-    test2 = go.Scatter(y=chart.select(pl.col("roe_core_4Q")).to_series(), x=date, name="roe cốt lõi", yaxis='y2',
+    test2 = go.Scatter(y=chart.select(pl.col("roe_core")).to_series(), x=date, name="roe cốt lõi", yaxis='y2',
                        line=dict(color='rgb(191, 214, 48)', width=3), mode='lines')
     test3 = go.Bar(y=chart.select(pl.col("op")).to_series(), x=date, name='LNTT cốt lõi',
                    marker=dict(color=('teal')))
@@ -147,8 +147,8 @@ def roae(dat):
 
     roae = [test1, test2, test3, test4, test5, test6,test7,test8]
     fig = go.Figure(data=roae,layout=go.Layout(barmode='relative',
-                                title='Lợi nhuận trước thuế (Quý)',
-                                xaxis=dict(tickformat='%Y-%b', showgrid=False),
+                                title='Lợi nhuận trước thuế',
+                                xaxis=dict(tickformat='%Y', showgrid=False),
                                 yaxis2=go.layout.YAxis(tickformat='.1%', gridwidth=3, overlaying='y', side='right',
                                                        showgrid=False)
 
@@ -161,8 +161,8 @@ def roae(dat):
                              paper_bgcolor='rgba(0, 0, 0, 0)')
 
 @app.callback(
-    Output(component_id='output-graph3SQLQ', component_property='figure'),
-    [Input(component_id='intermediate-valueSQLQ', component_property='children')]
+    Output(component_id='output-graph3SQLY', component_property='figure'),
+    [Input(component_id='intermediate-valueSQLY', component_property='children')]
 )
 def asset(dat):
     chart = pl.from_pandas(pd.read_json(dat))
@@ -192,7 +192,7 @@ def asset(dat):
                   ]
 
     fig = go.Figure(data=asset_data,layout=go.Layout(barmode='relative'
-                                , xaxis=dict(tickformat='%Y-%b', showgrid=False)
+                                , xaxis=dict(tickformat='%Y', showgrid=False)
                                 , yaxis=go.layout.YAxis(gridwidth=3  # ,hoverformat = '.1f'
                                                         )
                                 , yaxis2=go.layout.YAxis(showgrid=False, tickformat='.1%',
@@ -206,8 +206,8 @@ def asset(dat):
                              paper_bgcolor='rgba(0, 0, 0, 0)')
 
 @app.callback(
-    Output(component_id='output-graph4SQLQ', component_property='figure'),
-    [Input(component_id='intermediate-valueSQLQ', component_property='children')]
+    Output(component_id='output-graph4SQLY', component_property='figure'),
+    [Input(component_id='intermediate-valueSQLY', component_property='children')]
 )
 def equity(dat):
     chart = pl.from_pandas(pd.read_json(dat))
@@ -241,7 +241,7 @@ def equity(dat):
                   asset_bar11]
 
     fig = go.Figure(data=asset_data,layout=go.Layout(barmode='relative'
-                                , xaxis=dict(tickformat='%Y-%b', showgrid=False)
+                                , xaxis=dict(tickformat='%Y', showgrid=False)
                                 , yaxis2=go.layout.YAxis(showgrid=False, tickformat='.1%', overlaying='y',
                                                          side='right')
                                 , yaxis=go.layout.YAxis(gridwidth=3  # ,hoverformat = '.1f'
@@ -255,8 +255,8 @@ def equity(dat):
                              paper_bgcolor='rgba(0, 0, 0, 0)')
 
 @app.callback(
-    Output(component_id='output-graph5SQLQ', component_property='figure'),
-    [Input(component_id='intermediate-valueSQLQ', component_property='children')]
+    Output(component_id='output-graph5SQLY', component_property='figure'),
+    [Input(component_id='intermediate-valueSQLY', component_property='children')]
 )
 def growth(dat):
     chart = pl.from_pandas(pd.read_json(dat))
@@ -269,12 +269,12 @@ def growth(dat):
                     line=dict(color='red', width=3), mode='lines+markers')
     g = [g1, g2, g3]
     fig = go.Figure(data=g, layout=go.Layout(barmode='relative'
-                                                      , xaxis=dict(tickformat='%Y-%b', showgrid=False)
+                                                      , xaxis=dict(tickformat='%Y', showgrid=False)
                                                       , yaxis=go.layout.YAxis(showgrid=False, tickformat='.1%',
                                                                                overlaying='y'
                                                                                )
 
-                                                      , title='Tăng trưởng quý (YoY)'
+                                                      , title='Tăng trưởng'
                                                       , legend=dict(x=1.1, y=1)
                                                       ))
 
@@ -283,8 +283,8 @@ def growth(dat):
                              paper_bgcolor='rgba(0, 0, 0, 0)')
 
 @app.callback(
-    Output(component_id='output-graph6SQLQ', component_property='figure'),
-    [Input(component_id='intermediate-valueSQLQ', component_property='children')]
+    Output(component_id='output-graph6SQLY', component_property='figure'),
+    [Input(component_id='intermediate-valueSQLY', component_property='children')]
 )
 def cf(dat):
     chart = pl.from_pandas(pd.read_json(dat))
@@ -308,7 +308,7 @@ def cf(dat):
     asset_bar6,asset_bar7]
 
     fig = go.Figure(data=asset_data, layout=go.Layout(barmode='relative'
-                                , xaxis=dict(tickformat='%Y-%b')
+                                , xaxis=dict(tickformat='%Y')
                                 # , yaxis2=go.layout.YAxis(showgrid=False, tickformat='.1%', title='D/A', overlaying='y',
                                 #                          side='right')
                                 , yaxis=go.layout.YAxis(gridwidth=3  # ,hoverformat = '.1f'
@@ -321,15 +321,15 @@ def cf(dat):
                              plot_bgcolor='rgba(0, 0, 0, 0)',
                              paper_bgcolor='rgba(0, 0, 0, 0)')
 @app.callback(
-    Output(component_id='output-graph7SQLQ', component_property='figure'),
-    [Input(component_id='intermediate-valueSQLQ', component_property='children')]
+    Output(component_id='output-graph7SQLY', component_property='figure'),
+    [Input(component_id='intermediate-valueSQLY', component_property='children')]
 )
 def pe(dat):
     chart = pl.from_pandas(pd.read_json(dat))
     date = chart.select(pl.col("dates")).to_series()
-    bar1 = go.Scatter(y=chart.select(pl.col("Lãi/(lỗ) thuần sau thuế_4Q")).to_series(), x=date, name='LNST 4Q',
+    bar1 = go.Scatter(y=chart.select(pl.col("Lãi/(lỗ) thuần sau thuế")).to_series(), x=date, name='LNST 4Q',
                       line=dict(color='red', width=3,dash='dot'), mode='lines')
-    bar2 = go.Scatter(y=chart.select(pl.col("core_e_4Q")).to_series(), x=date, name='LNST cốt lõi 4Q',
+    bar2 = go.Scatter(y=chart.select(pl.col("core_e")).to_series(), x=date, name='LNST cốt lõi 4Q',
                       line=dict(color='rgb(191, 214, 48)', width=3,dash='dot'), mode='lines')
     # bar3 = go.Scatter(y=chart.select(pl.col("mc")).to_series(), x=date, name="Vốn hóa (phải)",
     #                   line=dict(color='darkturquoise', width=3), mode='lines+markers', yaxis='y')
@@ -339,7 +339,7 @@ def pe(dat):
 
     data_PE = [bar1, bar2]
     # , bar3,bar4]
-    fig = go.Figure(data=data_PE, layout=go.Layout(xaxis=dict(showgrid=False,tickformat='%Y-%b')
+    fig = go.Figure(data=data_PE, layout=go.Layout(xaxis=dict(showgrid=False,tickformat='%Y')
                                 , yaxis=go.layout.YAxis(gridwidth=3)
                                 , yaxis_type='log'
                                 , yaxis2=go.layout.YAxis(overlaying='y', side='right', showgrid=False
@@ -353,8 +353,8 @@ def pe(dat):
                              paper_bgcolor='rgba(0, 0, 0, 0)')
 
 @app.callback(
-    Output(component_id='output-graph8SQLQ', component_property='figure'),
-    [Input(component_id='intermediate-valueSQLQ', component_property='children')]
+    Output(component_id='output-graph8SQLY', component_property='figure'),
+    [Input(component_id='intermediate-valueSQLY', component_property='children')]
 )
 def pb(dat):
     chart = pl.from_pandas(pd.read_json(dat))
@@ -363,16 +363,16 @@ def pb(dat):
                       line=dict(color='lavender', width=3), mode='lines+markers')
     # bar2 = go.Scatter(y=chart.select(pl.col("mc")).to_series(), x=date, name='Vốn hóa',
     #                   line=dict(color='darkturquoise', width=3), mode='lines+markers')
-    bar3 = go.Scatter(y=chart.select(pl.col("roe_4Q")).to_series(), x=date, name="ROE (phải)",
+    bar3 = go.Scatter(y=chart.select(pl.col("roe")).to_series(), x=date, name="ROE (phải)",
                       line=dict(color='red', width=3,dash='dot'), mode='lines', yaxis='y2')
-    bar4 = go.Scatter(y=chart.select(pl.col("roe_core_4Q")).to_series(), x=date, name="ROE_core (phải)",
+    bar4 = go.Scatter(y=chart.select(pl.col("roe_core")).to_series(), x=date, name="ROE_core (phải)",
                       line=dict(color='rgb(191, 214, 48)', width=3,dash='dot'), mode='lines', yaxis='y2')
 
     data_PB = [bar1,
             #    bar2
                 bar3, bar4]
 
-    fig = go.Figure(data=data_PB, layout=go.Layout(xaxis=dict(showgrid=False,tickformat='%Y-%b')
+    fig = go.Figure(data=data_PB, layout=go.Layout(xaxis=dict(showgrid=False,tickformat='%Y')
                                                    , yaxis=go.layout.YAxis(gridwidth=3)
                                                    , yaxis_type='log'
                                                    , yaxis2=go.layout.YAxis(overlaying='y', side='right',rangemode='tozero',

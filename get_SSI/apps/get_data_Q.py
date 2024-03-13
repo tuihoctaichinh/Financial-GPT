@@ -9,9 +9,10 @@ import pyodbc
 
 
 list_chitieu = ['TỔNG TÀI SẢN','TÀI SẢN NGẮN HẠN','Tiền và tương đương tiền','Giá trị thuần đầu tư ngắn hạn','Các khoản phải thu','Hàng tồn kho, ròng','TÀI SẢN DÀI HẠN','Phải thu dài hạn','Tài sản cố định','GTCL TSCĐ hữu hình','Nguyên giá TSCĐ hữu hình','Khấu hao lũy kế TSCĐ hữu hình','GTCL Tài sản thuê tài chính','Nguyên giá tài sản thuê tài chính','Khấu hao lũy kế tài sản thuê tài chính','GTCL tài sản cố định vô hình','Nguyên giá TSCĐ vô hình','Khấu hao lũy kế TSCĐ vô hình','Bất động sản đầu tư','Nguyên giá tài sản đầu tư','Khấu hao lũy kế tài sản đầu tư','Tài sản dở dang dài hạn','Đầu tư dài hạn',
-                'NỢ PHẢI TRẢ','Nợ ngắn hạn','Phải trả người bán','Người mua trả tiền trước','Doanh thu chưa thực hiện ngắn hạn','Vay ngắn hạn','Nợ dài hạn','Người mua trả tiền trước dài hạn','Doanh thu chưa thực hiên','Vay dài hạn','Trái phiếu chuyển đổi','VỐN CHỦ SỞ HỮU','Vốn góp','Thặng dư vốn cổ phần','Cổ phiếu Quỹ','Lãi chưa phân phối','Lợi ích cổ đông không kiểm soát',
-                'Doanh số thuần','Lãi gộp','Thu nhập tài chính','Chi phí tài chính','Trong đó: Chi phí lãi vay','Lãi/(lỗ) từ công ty liên doanh','Chi phí bán hàng','Chi phí quản lý doanh  nghiệp','Thu nhập khác, ròng','Lãi/(lỗ) ròng trước thuế','Lãi/(lỗ) thuần sau thuế','Lợi nhuận của Cổ đông của Công ty mẹ',
-                'Lưu chuyển tiền thuần từ các hoạt động sản xuất kinh doanh','Khấu hao TSCĐ','Chi phí dự phòng','Chi phí lãi vay','Chi phí lãi vay đã trả','Thuế thu nhập doanh nghiệp đã trả','Lưu chuyển tiền tệ ròng từ hoạt động đầu tư','Tiền mua tài sản cố định và các tài sản dài hạn khác','Tiền thu được từ thanh lý tài sản cố định','Cổ tức và tiền lãi nhận được','Lưu chuyển tiền tệ từ hoạt động tài chính','Tiền thu từ phát hành cổ phiếu và vốn góp','Chi trả cho việc mua lại, trả lại cổ phiếu','Tiền thu được các khoản đi vay','Tiển trả các khoản đi vay','Tiền thanh toán vốn gốc đi thuê tài chính','Cổ tức đã trả'
+                'NỢ PHẢI TRẢ','Nợ ngắn hạn','Phải trả người bán','Người mua trả tiền trước','Doanh thu chưa thực hiện ngắn hạn','Vay ngắn hạn','Nợ dài hạn','Người mua trả tiền trước dài hạn','Doanh thu chưa thực hiên','Vay dài hạn','Trái phiếu chuyển đổi','VỐN CHỦ SỞ HỮU','Vốn góp','Thặng dư vốn cổ phần','Cổ phiếu Quỹ','Lãi chưa phân phối','Lợi ích cổ đông không kiểm soát','Doanh số thuần','Lãi gộp','Thu nhập tài chính','Chi phí tài chính','Trong đó: Chi phí lãi vay','Lãi/(lỗ) từ công ty liên doanh','Chi phí bán hàng','Chi phí quản lý doanh  nghiệp','Thu nhập khác, ròng','Lãi/(lỗ) ròng trước thuế','Lãi/(lỗ) thuần sau thuế','Lợi nhuận của Cổ đông của Công ty mẹ',
+                'Lưu chuyển tiền thuần từ các hoạt động sản xuất kinh doanh','Khấu hao TSCĐ',
+                # 'Chi phí dự phòng','Chi phí lãi vay','Chi phí lãi vay đã trả','Thuế thu nhập doanh nghiệp đã trả',
+                'Lưu chuyển tiền tệ ròng từ hoạt động đầu tư','Tiền mua tài sản cố định và các tài sản dài hạn khác','Tiền thu được từ thanh lý tài sản cố định','Cổ tức và tiền lãi nhận được','Lưu chuyển tiền tệ từ hoạt động tài chính','Tiền thu từ phát hành cổ phiếu và vốn góp','Chi trả cho việc mua lại, trả lại cổ phiếu','Tiền thu được các khoản đi vay','Tiển trả các khoản đi vay','Tiền thanh toán vốn gốc đi thuê tài chính','Cổ tức đã trả'
 ]
 def add_ratios_Q(x):
     x = x[list_chitieu]
@@ -37,7 +38,8 @@ def add_ratios_Q(x):
    
     x['cf_div'] = x['Cổ tức đã trả'] + x['Chi trả cho việc mua lại, trả lại cổ phiếu']
     x['cf_delta_debt'] = x['Tiền thu được các khoản đi vay'] + x['Tiển trả các khoản đi vay'] + x['Tiền thanh toán vốn gốc đi thuê tài chính']
-    x['cf_dep'] = x['Khấu hao TSCĐ'] + x['Chi phí dự phòng']
+    x['cf_dep'] = x['Khấu hao TSCĐ'] 
+    # + x['Chi phí dự phòng']
     x['cf_khac'] = (x['Lưu chuyển tiền thuần từ các hoạt động sản xuất kinh doanh']+x['Lưu chuyển tiền tệ ròng từ hoạt động đầu tư']+x['Lưu chuyển tiền tệ từ hoạt động tài chính']) - (x['Lãi/(lỗ) thuần sau thuế']+x['cf_dep']+x['Tiền mua tài sản cố định và các tài sản dài hạn khác']+x['Tiền thu từ phát hành cổ phiếu và vốn góp']+x['cf_delta_debt']+x['cf_div'])
     
     x['operating_EBITDA'] = x['op']+x['cf_dep']
@@ -90,7 +92,7 @@ def get_fs_Q(ticker):
     return fs
 
 
-def get_data(ticker):
+def get_data_Q(ticker):
     x = get_fs_Q(ticker)
     x = pl.from_pandas(x)
     # y = get_mc(ticker)

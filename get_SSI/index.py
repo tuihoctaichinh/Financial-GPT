@@ -3,7 +3,7 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 from app import app
 from app import server
-from apps import graphQ,home
+from apps import graphQ,graphY,home
 
 
 button1 =   dbc.DropdownMenu(
@@ -18,8 +18,8 @@ button2 =  dbc.DropdownMenu(
             ],
         label="Ngân hàng",color='success',className="m-1")
 button3 =  dbc.DropdownMenu(
-            [dbc.DropdownMenuItem("Quý", href="/apps/SQLQ"),
-             dbc.DropdownMenuItem("Năm", href="/apps/SQLY")
+            [dbc.DropdownMenuItem("Quý", href="/apps/secQ"),
+             dbc.DropdownMenuItem("Năm", href="/apps/secY")
             ],
         label="Chứng khoán",color='success',className="m-1")
 button4 =  dbc.DropdownMenu(
@@ -53,8 +53,8 @@ html.Div(id='page-content', children=[])
               [Input(component_id='url', component_property='pathname')]
               )
 def display_page(pathname):
-    # if pathname == '/apps/Y':
-    #     return graphY.layout
+    if pathname == '/apps/Y':
+        return graphY.layout
     if pathname == '/apps/Q':
         return graphQ.layout
     # if pathname == '/apps/bankY':
@@ -69,9 +69,6 @@ def display_page(pathname):
     #     return graphYins.layout
     # if pathname == '/apps/insQ':
     #     return graphQins.layout
-    # if pathname == '/apps/SQLQ':
-    #     return graphSQLQ.layout
-    # if pathname == '/apps/SQLY':
     #     return graphSQLY.layout
     # if pathname == '/apps/ctyrel':
     #     return ctyrel.layout
