@@ -5,4 +5,6 @@ cách sử dụng:
 - test thử Công ty thường >> Quý
 
 cấu phần: 
-- apps
+- apps/fundamental: lưu các headers để access API chứa dữ liệu
+- apps/get_data: query để lấy và tính toán số liệu BCTC
+- apps/graphQ: code vẽ chart
