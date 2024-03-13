@@ -100,7 +100,7 @@ def profit(dat):
     chart = pl.from_pandas(pd.read_json(dat))
     date = chart.select(pl.col("dates")).to_series()
     test = go.Scatter(y=chart.select(pl.col("Lãi gộp_m")).to_series(), x=date, name="Gross Margin", yaxis='y2',
-                      line=dict(color='red', width=3), mode='lines')
+                      line=dict(color='red', width=3), mode='lines',line_shape='spline')
     test2 = go.Scatter(y=chart.select(pl.col("EBT_m")).to_series(), x=date, name="OP Margin (inc. ir)",
                        yaxis='y2', line=dict(color='rgb(191, 214, 48)', width=3), mode='lines')
     test3 = go.Scatter(y=chart.select(pl.col("Lãi/(lỗ) thuần sau thuế_m")).to_series(), x=date,

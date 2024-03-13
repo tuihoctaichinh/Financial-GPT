@@ -100,11 +100,11 @@ def profit(dat):
     chart = pl.from_pandas(pd.read_json(dat))
     date = chart.select(pl.col("dates")).to_series()
     test = go.Scatter(y=chart.select(pl.col("Lãi gộp_m")).to_series(), x=date, name="Gross Margin", yaxis='y2',
-                      line=dict(color='red', width=3), mode='lines')
+                      line=dict(color='red', width=3), mode='lines',line_shape='spline')
     test2 = go.Scatter(y=chart.select(pl.col("EBT_m")).to_series(), x=date, name="OP Margin (inc. ir)",
-                       yaxis='y2', line=dict(color='rgb(191, 214, 48)', width=3), mode='lines')
+                       yaxis='y2', line=dict(color='rgb(191, 214, 48)', width=3), mode='lines',line_shape='spline')
     test3 = go.Scatter(y=chart.select(pl.col("Lãi/(lỗ) thuần sau thuế_m")).to_series(), x=date,
-                       name="Net Margin", yaxis='y2', line=dict(color='darkturquoise', width=3), mode='lines')
+                       name="Net Margin", yaxis='y2', line=dict(color='darkturquoise', width=3), mode='lines',line_shape='spline')
     test4 = go.Bar(y=chart.select(pl.col("Doanh số thuần")).to_series(), x=date, name='Doanh thu thuần',
                    marker=dict(color=('teal')))
     data_set = [test, test2, test3, test4]
@@ -129,9 +129,9 @@ def roae(dat):
     date = chart.select(pl.col("dates")).to_series()
 
     test1 = go.Scatter(y=chart.select(pl.col("roe")).to_series(), x=date, name="roe", yaxis='y2',
-                       line=dict(color='red', width=3), mode='lines')
+                       line=dict(color='red', width=3), mode='lines',line_shape='spline')
     test2 = go.Scatter(y=chart.select(pl.col("roe_core")).to_series(), x=date, name="roe cốt lõi", yaxis='y2',
-                       line=dict(color='rgb(191, 214, 48)', width=3), mode='lines')
+                       line=dict(color='rgb(191, 214, 48)', width=3), mode='lines',line_shape='spline')
     test3 = go.Bar(y=chart.select(pl.col("op")).to_series(), x=date, name='LNTT cốt lõi',
                    marker=dict(color=('teal')))
     test4 = go.Bar(y=(chart.select(pl.col("Trong đó: Chi phí lãi vay")).to_series()), x=date, name='Chi phí lãi vay',
@@ -143,7 +143,7 @@ def roae(dat):
     test7 = go.Bar(y=chart.select(pl.col("Thu nhập khác, ròng")).to_series(), x=date, name='LN khác',
                    marker=dict(color=('darkgray')))
     test8 = go.Scatter(y=chart.select(pl.col("Lãi/(lỗ) thuần sau thuế")).to_series(), x=date, name="LNST",
-                       line=dict(color='darkturquoise', width=3,dash='dot'), mode='lines')
+                       line=dict(color='darkturquoise', width=3,dash='dot'), mode='lines',line_shape='spline')
 
     roae = [test1, test2, test3, test4, test5, test6,test7,test8]
     fig = go.Figure(data=roae,layout=go.Layout(barmode='relative',
@@ -184,7 +184,7 @@ def asset(dat):
                         marker=dict(color=('darkgray')))
     asset_bar8 = go.Scatter(y=chart.select(pl.col("ca/ta")).to_series(), x=date, yaxis='y2',
                             name="TS ngắn hạn/Tổng tài sản", line=dict(color='deeppink', width=3, dash='dot'),
-                            mode='lines')
+                            mode='lines',line_shape='spline')
     # asset_bar9 = go.Scatter(y=chart.select(pl.col("mc")).to_series(), x=date, yaxis='y', name="Vốn hóa",
     #                         line=dict(color='darkturquoise', width=3), mode='lines+markers')
     asset_data = [asset_bar1, asset_bar2, asset_bar3, asset_bar4, asset_bar5, asset_bar6, asset_bar7,asset_bar8
@@ -234,7 +234,7 @@ def equity(dat):
     # asset_bar10 = go.Scatter(y=chart.select(pl.col("mc")).to_series(), x=date, name="Vốn hóa",
     #                          line=dict(color='darkturquoise', width=3), mode='lines+markers')
     asset_bar11 = go.Scatter(y=chart.select(pl.col("de")).to_series(), x=date, yaxis='y2', name="D/E",
-                             line=dict(color='deeppink', width=3, dash='dot'), mode='lines')
+                             line=dict(color='deeppink', width=3, dash='dot'), mode='lines',line_shape='spline')
     asset_data = [asset_bar1, asset_bar2, asset_bar3, asset_bar4, asset_bar5, asset_bar6, asset_bar7, asset_bar8,
                   asset_bar9, 
                 #   asset_bar10, 
@@ -328,14 +328,14 @@ def pe(dat):
     chart = pl.from_pandas(pd.read_json(dat))
     date = chart.select(pl.col("dates")).to_series()
     bar1 = go.Scatter(y=chart.select(pl.col("Lãi/(lỗ) thuần sau thuế")).to_series(), x=date, name='LNST 4Q',
-                      line=dict(color='red', width=3,dash='dot'), mode='lines')
+                      line=dict(color='red', width=3,dash='dot'), mode='lines',line_shape='spline')
     bar2 = go.Scatter(y=chart.select(pl.col("core_e")).to_series(), x=date, name='LNST cốt lõi 4Q',
-                      line=dict(color='rgb(191, 214, 48)', width=3,dash='dot'), mode='lines')
+                      line=dict(color='rgb(191, 214, 48)', width=3,dash='dot'), mode='lines',line_shape='spline')
     # bar3 = go.Scatter(y=chart.select(pl.col("mc")).to_series(), x=date, name="Vốn hóa (phải)",
     #                   line=dict(color='darkturquoise', width=3), mode='lines+markers', yaxis='y')
     # bar4 = go.Scatter(y=chart.select(pl.col("P/E")).to_series(), x=date, name="P/E (phải)",
     #                   line=dict(color='lavender', width=3),
-    #                   mode='lines', yaxis='y2')
+    #                   mode='lines',line_shape='spline', yaxis='y2')
 
     data_PE = [bar1, bar2]
     # , bar3,bar4]
@@ -364,9 +364,9 @@ def pb(dat):
     # bar2 = go.Scatter(y=chart.select(pl.col("mc")).to_series(), x=date, name='Vốn hóa',
     #                   line=dict(color='darkturquoise', width=3), mode='lines+markers')
     bar3 = go.Scatter(y=chart.select(pl.col("roe")).to_series(), x=date, name="ROE (phải)",
-                      line=dict(color='red', width=3,dash='dot'), mode='lines', yaxis='y2')
+                      line=dict(color='red', width=3,dash='dot'), mode='lines',line_shape='spline', yaxis='y2')
     bar4 = go.Scatter(y=chart.select(pl.col("roe_core")).to_series(), x=date, name="ROE_core (phải)",
-                      line=dict(color='rgb(191, 214, 48)', width=3,dash='dot'), mode='lines', yaxis='y2')
+                      line=dict(color='rgb(191, 214, 48)', width=3,dash='dot'), mode='lines',line_shape='spline', yaxis='y2')
 
     data_PB = [bar1,
             #    bar2

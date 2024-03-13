@@ -89,6 +89,7 @@ def get_fs_Q(ticker):
     fs['quarter'] = fs.index.str[1].astype(float)
     fs['dates'] = pd.PeriodIndex(year=fs["year"], quarter=fs["quarter"])
     fs['dates'] = fs['dates'].dt.to_timestamp(freq='Q')
+    fs = fs.sort_values(by='dates')
     return fs
 
 
