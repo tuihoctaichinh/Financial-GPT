@@ -66,9 +66,9 @@ def g_func(x):
 
 def get_fs_Y(ticker):
     bs = financial_report(ticker,'BalanceSheet','Yearly')
-    bs = bs.loc[:, (bs==0).mean() < .6]
+    # bs = bs.loc[:, (bs==0).mean() < .6]
     pl = financial_report(ticker,'IncomeStatement','Yearly')
-    pl = pl.loc[:, (pl==0).mean() < .6]
+    # pl = pl.loc[:, (pl==0).mean() < .6]
     cf = financial_report(ticker,'CashFlow','Yearly')
     cf = cf.rename(columns={'Unnamed: 0': 'CHỈ TIÊU'})
     cf.set_index('CHỈ TIÊU', inplace=True)
@@ -79,14 +79,14 @@ def get_fs_Y(ticker):
         cf = pd.concat([cf,cf2],axis=0)
     cf = cf.reset_index().rename(columns={'index': 'CHỈ TIÊU'})
 
-    fs = pd.concat([bs,pl,cf],join="inner")
+    fs = pd.concat([bs,pl,cf])
     fs = fs.T
     fs.columns = fs.iloc[0]
     fs = fs.iloc[1:,:]
     #delete all the row with NaN value > 40
     fs = fs.dropna(axis=0,thresh=40)
    #Dropping rows if more than half of the values are zeros 
-    fs = fs.loc[fs.isna().sum(axis=1)<50]
+    # fs = fs.loc[fs.isna().sum(axis=1)<50]
     fs = add_ratios_Y(fs)
     fs = margin_func(fs)
     fs = g_func(fs)

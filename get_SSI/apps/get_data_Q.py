@@ -72,9 +72,9 @@ def g_func(x):
 
 def get_fs_Q(ticker):
     bs = financial_report(ticker,'BalanceSheet','Quarterly')
-    bs = bs.loc[:, (bs==0).mean() < .6]
+    # bs = bs.loc[:, (bs==0).mean() < .6]
     pl = financial_report(ticker,'IncomeStatement','Quarterly')
-    pl = pl.loc[:, (pl==0).mean() < .6]
+    # pl = pl.loc[:, (pl==0).mean() < .6]
     cf = financial_report(ticker,'CashFlow','Quarterly')
     cf = cf.rename(columns={'Unnamed: 0': 'CHỈ TIÊU'})
     cf.set_index('CHỈ TIÊU', inplace=True)
@@ -92,7 +92,7 @@ def get_fs_Q(ticker):
     fs.columns = fs.iloc[0]
     fs = fs.iloc[1:,:]
     #Dropping rows if more than half of the values are zeros 
-    fs = fs.loc[fs.isna().sum(axis=1)<50]
+    # fs = fs.loc[fs.isna().sum(axis=1)<50]
 
     fs = add_ratios_Q(fs)
     fs = margin_func(fs)
