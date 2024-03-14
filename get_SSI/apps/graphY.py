@@ -116,6 +116,7 @@ def profit(dat):
                                                     overlaying='y', side='right')
                            , legend=dict(x=1.1, y=1)
                            ))
+    
     return fig.update_layout( template='plotly_dark',title_x=0.5,
                         plot_bgcolor= 'rgba(0, 0, 0, 0)',
                         paper_bgcolor= 'rgba(0, 0, 0, 0)')

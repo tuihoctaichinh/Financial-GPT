@@ -29,7 +29,7 @@ def add_ratios_Y(x):
     x['ca/ta'] = x['TÀI SẢN NGẮN HẠN']/(1+x['TỔNG TÀI SẢN'])
     x['de'] = x['debt']/(1+x['VỐN CHỦ SỞ HỮU'])
 
-    x['tax_rate'] = 1-(x['Lãi/(lỗ) thuần sau thuế']/x['Lãi/(lỗ) ròng trước thuế'])
+    x['tax_rate'] = 1-(x['Lãi/(lỗ) thuần sau thuế']/(1+x['Lãi/(lỗ) ròng trước thuế']))
     x['op'] = (x['Lãi gộp'] + x['Chi phí bán hàng'] + x['Chi phí quản lý doanh  nghiệp'])
     x['core_e'] = x['op'] * (1 - x['tax_rate'])
     x['fin_income'] = x['Thu nhập tài chính'] + (x['Chi phí tài chính'] - x['Trong đó: Chi phí lãi vay'])
@@ -53,7 +53,7 @@ col2 = ['Doanh số thuần', 'Lãi gộp', 'op', 'EBT', 'Lãi/(lỗ) ròng trư
 
 def margin_func(x):
     for i in col1:
-        x[i + "_m"] = x[i] / x['Doanh số thuần']
+        x[i + "_m"] = x[i] / (1+x['Doanh số thuần'])
     return x
 
 def g_func(x):
@@ -66,18 +66,27 @@ def g_func(x):
 
 def get_fs_Y(ticker):
     bs = financial_report(ticker,'BalanceSheet','Yearly')
+    bs = bs.loc[:, (bs==0).mean() < .6]
     pl = financial_report(ticker,'IncomeStatement','Yearly')
+    pl = pl.loc[:, (pl==0).mean() < .6]
     cf = financial_report(ticker,'CashFlow','Yearly')
     cf = cf.rename(columns={'Unnamed: 0': 'CHỈ TIÊU'})
-    fs = pd.concat([bs,pl,cf])
-    #delete all the column with NaN value > 40
-    fs = fs.dropna(axis=1,thresh=40)
-    #Dropping rows if more than half of the values are zeros 
-    fs = fs.loc[fs.isna().sum(axis=1)<50]
-       
+    cf.set_index('CHỈ TIÊU', inplace=True)
+    cf2 = pd.DataFrame(index = {'Khấu hao TSCĐ':'CHỈ TIÊU'}, columns = cf.columns).fillna(0)
+    if cf2.index[0] in cf.index:
+        pass
+    else:
+        cf = pd.concat([cf,cf2],axis=0)
+    cf = cf.reset_index().rename(columns={'index': 'CHỈ TIÊU'})
+
+    fs = pd.concat([bs,pl,cf],join="inner")
     fs = fs.T
     fs.columns = fs.iloc[0]
     fs = fs.iloc[1:,:]
+    #delete all the row with NaN value > 40
+    fs = fs.dropna(axis=0,thresh=40)
+   #Dropping rows if more than half of the values are zeros 
+    fs = fs.loc[fs.isna().sum(axis=1)<50]
     fs = add_ratios_Y(fs)
     fs = margin_func(fs)
     fs = g_func(fs)
