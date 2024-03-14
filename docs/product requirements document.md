@@ -1,4 +1,4 @@
-# User requirements 
+# Product Requirements Document
 This Product Requirements Document (PRD) serves as a comprehensive guide detailing the features of the envisioned chatbot product aimed at assisting stock traders in making informed decisions about stocks. 
 This document includes the user's requirements, defining the scope, functionality, and key deliverables of the proposed chatbot application.
 The Product Requirements Document (PRD) will serve as a guide for technical requirement analysis, guide the code development and selection of appropriate tools and technologies for the chatbot implementation.
