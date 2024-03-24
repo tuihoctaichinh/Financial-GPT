@@ -8,6 +8,14 @@ The Product Requirements Document (PRD) will serve as a guide for technical requ
 
 
 ## Requirements Breakdown:
-- Implement functionality to extract company profiles and financial statements, including a fixed text box and visualization.
-- Develop a chatbot capable of providing insights from securities reports about companies, with the potential inclusion of financial statement commentaries.
+1. Data Extractor/ Visualizer
+Implement functionality to extract company profiles and financial statements, including a fixed text box and visualization.
+
+What information does the product show? 
+
+3. Q&A chatbot
+Develop a chatbot capable of providing insights from securities reports about companies, with the potential inclusion of financial statement commentaries.
+
+What kind of questions users would ask? 
+
 
