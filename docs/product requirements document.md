@@ -12,12 +12,16 @@ The Product Requirements Document (PRD) will serve as a guide for technical requ
 Implement functionality to extract company profiles and financial statements, including a fixed text box and visualization.
 
 What are some use cases for this? (Think of about 5 ideas)
+
 a. I want to ask the chatbot about a company's financial performance for the last year.
+
 b. I want to view visualizations of a company's financial statements to understand its performance trends.
 
 3. Q&A chatbot
 Develop a chatbot capable of providing insights from securities reports about companies, with the potential inclusion of financial statement commentaries.
 
 What are some use cases for this? (Think of about 5 ideas)
+
 a. I want to summarize the company's financial performance for the last year, based on the charts that were generated in Da.ta Visualizer?
+
 b. I want to ask about the industry trends related to company's operations
