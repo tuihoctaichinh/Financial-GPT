@@ -8,7 +8,7 @@ The Product Requirements Document (PRD) will serve as a guide for technical requ
 
 
 ## Requirements Breakdown:
-1. Data Extractor/ Visualizer
+### 1. Data Extractor/ Visualizer
 Implement functionality to extract company profiles and financial statements, including a fixed text box and visualization.
 
 What are some use cases for this? (Think of about 5 ideas)
@@ -26,7 +26,7 @@ e. I want to see contents of FS Notes (+ Annual Report)
 f. I want to see stock-related information 
 
 
-2. Q&A chatbot
+### 2. Q&A chatbot
 Develop a chatbot capable of providing insights from securities reports about companies, with the potential inclusion of financial statement commentaries.
 
 What are some use cases for this? (Think of about 5 ideas)
