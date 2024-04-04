@@ -40,7 +40,9 @@ def qachatbot(question, include_prompt=False, structured_result=False):
     openai.api_key = os.environ.get('OPENAI_API_KEY')
 
     # Initialize ChatOpenAI with temperature set to 0
-    llm = ChatOpenAI(temperature=0)
+    llm = ChatOpenAI(temperature=0,
+                     #streaming=True
+                     )
     
     #---------------------------------------------------#
     if include_prompt and structured_result:
