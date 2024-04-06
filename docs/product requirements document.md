@@ -34,15 +34,22 @@ What are some use cases for this? (Think of about 5 ideas)
 a. I want to summarize the company's financial performance for the last year,
 + based on vietcap's security reports
 + based on the charts that were generated in Data Visualizer?
+  
 
 b. I want to ask about the industry trends related to company's operations
 
+
 c. I want to get related questions and be able to click the related questions to get the answer
+
 
 d. I want to find the most potential mid-cap company in the next year? 
 
-e. If I ask the chatbot about revenue analysis in 2023, how do I separate the analysis from 2022. 
-How do I ask back for the lack of information. 
-=> Save files in year folder, data quality (divide by metadata)
+
+e. If I ask the chatbot about revenue analysis in 2023, how do I separate the analysis from 2022? 
+
+=> **Solution**: (1) Store metadata, (2) self-query retriever
+
+
+f. If I ask an ambiguous question , I would like the chatbot to prompt me to clarify or redefine my question.
 
 
