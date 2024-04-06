@@ -11,13 +11,20 @@
 
 ## 1. Raw Data
 
+
 ## 2. Database 
 ### 2.1. Choice of vector database
+Pinecone
 
 ### 2.2. Data Embedding
-To increase the accuracy of document search, report metadata should be captured. The list of metadata includes:
+#### 2.2.1 PDF parser
+
+#### 2.2.2 Metadata
+To increase the accuracy of document search, report metadata should be captured. The metadata should consist of information utilized to differentiate similar content (e.g: industry updates, financial statements), which may vary in context (e.g., 2022 versus 2023). 
+The list of metadata includes:
 - report type: Types of report (Annual report, Stock analysis report)
 - report year: Financial year that the report is talking about?
+
 
 ## 3. Chatbot 
 ### 3.1. Self-query retriever
@@ -32,8 +39,18 @@ Example of input:
 How did SWE perform in 2023 compared to the previous year?
 
 Example of output:
-PROMPT QUERY:  SWE profit
-PROMPT FILTER:  comparator=<Comparator.EQ: 'eq'> attribute='reportyear' value=2020
-PROMPT FILTER:  None
+- PROMPT QUERY:  SWE profit
+- PROMPT FILTER:  comparator=<Comparator.EQ: 'eq'> attribute='reportyear' value=2020
+- PROMPT FILTER:  None
 
-## 3. Chatbot 
+### 3.2 Related questions
+Prompt to generate related questions:
+_"Generate 3 related questions that users might be interested in, based on the context."_
+
+Ideally, the related questions should be presented as clickable buttons. Upon clicking these buttons, the answer box should dynamically update to display the answer corresponding to the selected question.
+
+Figure 2. Buttons for related questions
+
+<img width="377" alt="image" src="https://github.com/tuihoctaichinh/Financial-GPT/assets/159899982/0ef0b272-9994-41ad-a186-baef087fac7a">
+
+## 4. User Interface
