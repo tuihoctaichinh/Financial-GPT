@@ -40,7 +40,7 @@ b. I want to ask about the industry trends related to company's operations
 
 
 c. I want to get related questions and be able to click the related questions to get the answer
-
+=> **Solution**: Prompt and pre-defined output structure
 
 d. I want to find the most potential mid-cap company in the next year? 
 
