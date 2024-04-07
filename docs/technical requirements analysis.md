@@ -30,6 +30,8 @@ The list of metadata includes:
 ### 3.1. Self-query retriever
 Chatbot turns user query into structured query to look for documents inside vector store.
 
+Langchain's sample project: https://github.com/langchain-ai/langchain/blob/master/cookbook/self_query_hotel_search.ipynb
+
 Figure 1. Example process of self-querying
 ![alt text](https://python.langchain.com/assets/images/self_querying-26ac0fc8692e85bc3cd9b8640509404f.jpg)
 
