@@ -32,7 +32,7 @@ class Answer(BaseModel):
     related_q2: str = Field(description="related question no.2")
     related_q3: str = Field(description="related question no.3")
         
-def qachatbot(question, include_prompt=False, structured_result=False):
+def qachatbot(question, include_prompt=False, structured_result=False, sysmessage=sysmessage):
     if not include_prompt and structured_result:
         raise Exception("include prompt if want to have structured answer")
     #---------------------------------------------------#
@@ -62,7 +62,8 @@ def qachatbot(question, include_prompt=False, structured_result=False):
         # Set up RetrievalQA with the language model and retriever
         qa_chain = RetrievalQA.from_chain_type(llm, 
                                             retriever=vectordb.as_retriever(search_kwargs={"k": 3}),
-                                            chain_type_kwargs= {"prompt": prompt}
+                                            chain_type_kwargs= {"prompt": prompt},
+                                            return_source_documents = True
                                             )   
     #---------------------------------------------------#
     if include_prompt and not structured_result:
@@ -78,13 +79,15 @@ def qachatbot(question, include_prompt=False, structured_result=False):
         # Set up RetrievalQA with the language model and retriever
         qa_chain = RetrievalQA.from_chain_type(llm, 
                                             retriever=vectordb.as_retriever(search_kwargs={"k": 3}),
-                                            chain_type_kwargs= {"prompt": prompt}
+                                            chain_type_kwargs= {"prompt": prompt},
+                                            return_source_documents = True
                                             )  
     #---------------------------------------------------#
     if not include_prompt and not structured_result:
         # Set up RetrievalQA with the language model and retriever
         qa_chain = RetrievalQA.from_chain_type(llm, 
-                                            retriever=vectordb.as_retriever(search_kwargs={"k": 3}))
+                                            retriever=vectordb.as_retriever(search_kwargs={"k": 3}),
+                                            return_source_documents = True)
         
     #---------------------------------------------------#
          
@@ -94,24 +97,45 @@ def qachatbot(question, include_prompt=False, structured_result=False):
     
     return result, cb    
 
-
+def answer_question(question, include_prompt=True, structured_result=True, sysmessage=sysmessage):
+    result, cb = qachatbot(question=question, include_prompt=include_prompt, structured_result=structured_result, sysmessage=sysmessage)
+    
+    if structured_result:
+        result_json_string = result["result"]
+        parsed_result = json.loads(result_json_string)
+        st.write(parsed_result["answer_"])
+        st.write("Related Question 1: " + parsed_result["related_q1"])
+        st.write("Related Question 2: " + parsed_result["related_q2"])
+        st.write("Related Question 3: " + parsed_result["related_q3"])
+    else:
+        st.write(result)  # Output the result directly if structured_result is False
+        
+    st.write(cb)
+    
 # Streamlit app
 st.title("Financial GPT")
+
+# Text area for user to input custom prompt
+custom_prompt = st.text_area("Custom Prompt", sysmessage)
+
+# Dropdown for selecting structured or unstructured result
+structured_options = ["Structured answer", "Unstructured answer (for testing)"]
+structured_result_option = st.selectbox("Select Result Type:", structured_options, key="structured_result")
+
+# Dropdown for including or excluding the prompt
+include_prompt_option = st.selectbox("Include Prompt:", ["Yes", "No"], key="include_prompt")
 
 # Input field for question
 question = st.text_input("Enter your question:")
 askbutton = st.button("Ask")
 
-def answer_question(question):
-    result, cb = qachatbot(question=question,include_prompt=True, structured_result=True)
-    result_json_string = result["result"]
-    parsed_result = json.loads(result_json_string)
-    st.write(parsed_result["answer_"])
-    st.write("Related Question 1: " + parsed_result["related_q1"])
-    st.write("Related Question 2: " + parsed_result["related_q2"])
-    st.write("Related Question 3: " + parsed_result["related_q3"])
-    st.write(cb)
-    
 if askbutton:
-    answer_question(question)
-
+    # Determine whether to include structured result based on the dropdown selection
+    structured_result = structured_result_option == "Structured answer"
+    # Determine whether to include prompt based on the dropdown selection
+    include_prompt = include_prompt_option == "Yes"
+    # Get the user-defined prompt from the text area
+    custom_sysmessage = custom_prompt.strip()  # Remove leading/trailing whitespace
+    # Use custom prompt if provided, otherwise use the default prompt (sysmessage)
+    sysmessage_to_use = custom_sysmessage if custom_sysmessage else sysmessage
+    answer_question(question, include_prompt=include_prompt, structured_result=structured_result, sysmessage=sysmessage_to_use)
