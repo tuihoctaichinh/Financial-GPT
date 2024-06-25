@@ -1,0 +1,15 @@
+openai==1.14.2
+streamlit==1.27.1 
+langchain==0.1.12
+langchain-core==0.1.33
+langchain-openai==0.1.1
+chromadb
+dash==2.17.0
+dash-bootstrap-components
+beautifulsoup4
+polars
+pyodbc
+requests_html
+lxml_html_clean
+pandas
+openpyxl==3.1.0

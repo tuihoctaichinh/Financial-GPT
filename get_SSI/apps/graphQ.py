@@ -331,14 +331,13 @@ def pe(dat):
                       line=dict(color='red', width=3,dash='dot'), mode='lines',line_shape='spline')
     bar2 = go.Scatter(y=chart.select(pl.col("core_e_4Q")).to_series(), x=date, name='LNST cốt lõi 4Q',
                       line=dict(color='rgb(191, 214, 48)', width=3,dash='dot'), mode='lines',line_shape='spline')
-    # bar3 = go.Scatter(y=chart.select(pl.col("mc")).to_series(), x=date, name="Vốn hóa (phải)",
-    #                   line=dict(color='darkturquoise', width=3), mode='lines+markers', yaxis='y')
-    # bar4 = go.Scatter(y=chart.select(pl.col("P/E")).to_series(), x=date, name="P/E (phải)",
-    #                   line=dict(color='lavender', width=3),
-    #                   mode='lines',line_shape='spline', yaxis='y2')
+    bar3 = go.Scatter(y=chart.select(pl.col("marketCap")).to_series(), x=date, name="Vốn hóa (phải)",
+                      line=dict(color='darkturquoise', width=3), mode='lines+markers', yaxis='y')
+    bar4 = go.Scatter(y=chart.select(pl.col("P/E")).to_series(), x=date, name="P/E (phải)",
+                      line=dict(color='lavender', width=3),
+                      mode='lines',line_shape='spline', yaxis='y2')
 
-    data_PE = [bar1, bar2]
-    # , bar3,bar4]
+    data_PE = [bar1, bar2, bar3,bar4]
     fig = go.Figure(data=data_PE, layout=go.Layout(xaxis=dict(showgrid=False,tickformat='%Y-%b')
                                 , yaxis=go.layout.YAxis(gridwidth=3)
                                 , yaxis_type='log'
@@ -361,15 +360,15 @@ def pb(dat):
     date = chart.select(pl.col("dates")).to_series()
     bar1 = go.Scatter(y=chart.select(pl.col("VỐN CHỦ SỞ HỮU")).to_series(), x=date, name='Giá trị số sách',
                       line=dict(color='lavender', width=3), mode='lines+markers')
-    # bar2 = go.Scatter(y=chart.select(pl.col("mc")).to_series(), x=date, name='Vốn hóa',
-    #                   line=dict(color='darkturquoise', width=3), mode='lines+markers')
+    bar2 = go.Scatter(y=chart.select(pl.col("marketCap")).to_series(), x=date, name='Vốn hóa',
+                      line=dict(color='darkturquoise', width=3), mode='lines+markers')
     bar3 = go.Scatter(y=chart.select(pl.col("roe_4Q")).to_series(), x=date, name="ROE (phải)",
                       line=dict(color='red', width=3,dash='dot'), mode='lines',line_shape='spline', yaxis='y2')
     bar4 = go.Scatter(y=chart.select(pl.col("roe_core_4Q")).to_series(), x=date, name="ROE_core (phải)",
                       line=dict(color='rgb(191, 214, 48)', width=3,dash='dot'), mode='lines',line_shape='spline', yaxis='y2')
 
     data_PB = [bar1,
-            #    bar2
+               bar2,
                 bar3, bar4]
 
     fig = go.Figure(data=data_PB, layout=go.Layout(xaxis=dict(showgrid=False,tickformat='%Y-%b')
