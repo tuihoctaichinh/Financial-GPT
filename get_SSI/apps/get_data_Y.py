@@ -96,10 +96,16 @@ def get_fs_Y(ticker):
 
 def get_data_Y(ticker):
     x = get_fs_Y(ticker)
-    x = pl.from_pandas(x)
-    # y = get_mc(ticker)
-    # x = pl.concat([y,x],how='align')
-    # x = x.with_columns((pl.col('mc')/pl.col('Lãi/(lỗ) thuần sau thuế_4Q')).alias('P/E'))
-    # x = x.with_columns((pl.col('mc')/pl.col('VỐN CHỦ SỞ HỮU')).alias('P/B'))
-    # x = x.with_columns([(pl.col('dates').dt.strftime("%Y")).alias('dates')])
-    return x
+    x = x.reset_index()
+    #rename columns 'index' to 'period'
+    x = x.rename(columns={'index':'period'})
+    #remove space in 'period' column
+    x['period'] = x['period'].str.replace(' ', '')
+    x=pl.from_pandas(x)
+    y = get_mc(ticker,period='Y')
+    y=pl.from_pandas(y)
+    merged_df = x.join(y, on='period', how='inner')
+    merged_df = merged_df.with_columns((pl.col('marketCap')/pl.col('Lãi/(lỗ) thuần sau thuế_m')).alias('P/E'))
+    merged_df = merged_df.with_columns((pl.col('marketCap')/pl.col('VỐN CHỦ SỞ HỮU')).alias('P/B'))
+    #merged_df = merged_df.with_columns([pl.col('dates').cast(pl.Utf8).alias('dates')])
+    return merged_df
