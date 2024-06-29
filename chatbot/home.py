@@ -1,4 +1,3 @@
-from rag_function import rag
 import streamlit as st
 from chatbot_app import answer_question, qachatbot
 from chatbot_app_conv_function import chatbot_conv
