@@ -29,7 +29,7 @@ if user_prompt is not None:
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Loading..."):
-            answer, related_q1, related_q2, related_q3 = chatbot_conv(user_prompt)
+            answer, related_q1, related_q2, related_q3 = chatbot_conv_entitymemory(user_prompt)
             st.write(answer)
             st.write("Some follow up questions you might be interested in:")
             st.write(related_q1)
