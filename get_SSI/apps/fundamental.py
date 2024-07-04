@@ -498,118 +498,72 @@ def get_industry(ticker,lang):
     except:
         return None
 
-# get market cap of the company by multiplying the close price with the number of shares
-def get_mc(ticker,period='Q'): 
-    # Get SSI's org code from ticker
-    org_listing = organ_listing()
-    org_code = org_listing[org_listing['ticker']==ticker]['organCode']
-    org_code = org_code.values[0]
+def get_os(symbol,frequency='Quarterly'): 
+    symbol = symbol.upper()
+    organ_code = organ_listing().query(f'ticker == @symbol')['organCode'].values[0]
+    url = f'https://fiin-fundamental.ssi.com.vn/FinancialAnalysis/DownloadFinancialRatio2?language=vi&OrganCode={organ_code}&CompareToIndustry=false&Frequency={frequency}&Ratios=ryd3&TimeLineFrom=2001&TimeLineTo=2025'
+    response = requests.get(url, headers=ssi_headers)
+    status = response.status_code
+    if status == 200:
+        df = pd.read_excel(BytesIO(response.content), skiprows=7)
+        df = df.rename(columns={'Chỉ số': 'LengthReport'})
+        x = df.T
+        x.columns = x.iloc[0]
+        x = x.iloc[1:,:]
+        x['year'] = x.index.str[-4:].astype(int)
+        x['quarter'] = x.index.str[1].astype(float)
+        x['dates'] = pd.PeriodIndex(year=x["year"], quarter=x["quarter"])
+        x['dates'] = x['dates'].dt.to_timestamp(freq='Q')
+        x = x.replace(0, np.nan)
+        x = x.rename(columns={x.columns[0]: 'mc'})
+        x = x.sort_values(by='dates')
+        return x[['year','quarter',symbol]]
 
-    #------------------------------------------------------------------------------------#
-    # Crawl data number of shares from SSI
-    # insert url
-    url=f'https://fiin-fundamental.ssi.com.vn/FinancialAnalysis/GetFinancialRatioV2?language=vi&Type=Company&OrganCode={org_code}&Timeline=2006_4&Timeline=2007_1&Timeline=2007_2&Timeline=2007_3&Timeline=2007_4&Timeline=2008_1&Timeline=2008_2&Timeline=2008_3&Timeline=2008_4&Timeline=2009_1&Timeline=2009_2&Timeline=2009_3&Timeline=2009_4&Timeline=2010_1&Timeline=2010_2&Timeline=2010_3&Timeline=2010_4&Timeline=2011_1&Timeline=2011_2&Timeline=2011_3&Timeline=2011_4&Timeline=2012_1&Timeline=2012_2&Timeline=2012_3&Timeline=2012_4&Timeline=2013_1&Timeline=2013_2&Timeline=2013_3&Timeline=2013_4&Timeline=2014_1&Timeline=2014_2&Timeline=2014_3&Timeline=2014_4&Timeline=2015_1&Timeline=2015_2&Timeline=2015_3&Timeline=2015_4&Timeline=2016_1&Timeline=2016_2&Timeline=2016_3&Timeline=2016_4&Timeline=2017_1&Timeline=2017_2&Timeline=2017_3&Timeline=2017_4&Timeline=2018_1&Timeline=2018_2&Timeline=2018_3&Timeline=2018_4&Timeline=2019_1&Timeline=2019_2&Timeline=2019_3&Timeline=2019_4&Timeline=2020_1&Timeline=2020_2&Timeline=2020_3&Timeline=2020_4&Timeline=2021_1&Timeline=2021_2&Timeline=2021_3&Timeline=2021_4&Timeline=2022_1&Timeline=2022_2&Timeline=2022_3&Timeline=2022_4&Timeline=2023_1&Timeline=2023_2&Timeline=2023_3&Timeline=2023_4&Timeline=2024_1&Timeline=2024_2&Timeline=2024_3&Timeline=2024_4'
-
-    # Define the headers
-    headers = ssi_headers
-    # Make the request
-    response = requests.get(url, headers=headers)
-
-    # Check the response
-    if response.status_code == 200:
-        print("Success!")
-        print(response.json())
     else:
-        print(f"Error: {response.status_code}")
-        print(response.text)
-
-    df = pd.DataFrame(response.json()['items'])
-    df
-
-    #------------------------------------------
-    # find column name of number of shares data
-    x=df.iloc[[5],:]['value']
-
-    #convert x to df, where headers are the keys of the dictionary, 
-    y = pd.DataFrame(x.to_dict())
-
-    # rename cols to ratio and value
-    y.rename(columns={'5':'value'}, inplace=True)
-
-    y['value']=y.iloc[4:,0]/10**9
-    y[np.abs(y.iloc[:,1]-29112.72)<1] # find the row where the value is 29112.72 
-
-    df1=pd.DataFrame(df['value'])
-
-    # convert each cell from df1 to dataframe
-    df2 = pd.DataFrame(df1['value'].to_dict())
-    df2=df2.T
-    df_numberOfShares=df2[['yearReport','lengthReport','ryd3']]
-
-    #rename cols y to year, quarter and numberOfShares
-    df_numberOfShares.rename(columns={'yearReport':'year','lengthReport':'quarter','ryd3':'numberOfShares'}, inplace=True)
-    df_numberOfShares
-
-    #------------------------------------------------------------------------------------#
-    # Crawl data close prices from cafef
-    url2=f'https://s.cafef.vn/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol={ticker}&StartDate=&EndDate=&PageIndex=1&PageSize=200000'
-
-    # use request to get the data
-    response2 = requests.get(url2)
-    response2.text
-
-    x=response2.json()['Data']
-    x2=pd.DataFrame(x['Data'])
-
-    # create column year, month, date based on col 'Ngay'
-    x2['year']=x2['Ngay'].apply(lambda x: x.split('/')[2])
-    x2['month']=x2['Ngay'].apply(lambda x: x.split('/')[1])
-    x2['date']=x2['Ngay'].apply(lambda x: x.split('/')[0])
-    x2['year']=x2['year'].astype(int)
-    x2['month']=x2['month'].astype(int)
-    x2['date']=x2['date'].astype(int)
-
-    #find the lastest trading day of each quarter
-    x2['quarter']=x2['month'].apply(lambda x: (x-1)//3+1)
-    x2['quarter']
-    #filter the lastest trading day of each quarter basd on the quarter and date columns, filter months 3,6,9,12
-    x3=x2[(x2['month']==3) | (x2['month']==6) | (x2['month']==9) | (x2['month']==12)]
-    x4=x3.groupby(['year','quarter']).apply(lambda x: x[x['date']==x['date'].max()])
-
-    #convert x4['GiaDongCua'] to df
-    df_closePrice = pd.DataFrame(x4['GiaDongCua'])*(10**3)
+        print(f'Error {status} when getting data. Details:\n {response.text}')
+        return None
     
-    # turn index of y to columns
-    df_closePrice.reset_index(inplace=True)
-    # delete the 3rd column
-    df_closePrice.drop(columns=['level_2'], inplace=True)
-    # rename the col 'GiaDongCua' to 'closePrice'
-    df_closePrice.rename(columns={'GiaDongCua':'closePrice'}, inplace=True)
+def get_price(ticker, period='Q'):
+    url = f'https://s.cafef.vn/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol={ticker}&StartDate=&EndDate=&PageIndex=1&PageSize=200000'
     
-    #------------------------------------------------------------------------------------#
-    # Merge df NumberOfShares and ClosePrice into df_mc
-    df_mc_Q=pd.merge(df_numberOfShares,df_closePrice, on=['year','quarter'])
-    df_mc_Q['marketCap']=df_mc_Q['numberOfShares']*df_mc_Q['closePrice']
-    # add a column for quarter and year, in the format of 'Q12020', based on cols 'year' and 'quarter', by turning values 'quarter' into Q1, Q2, Q3, Q4
-    df_mc_Q['quarter']=df_mc_Q['quarter'].apply(lambda x: 'Q'+str(x))
-    df_mc_Q['year']=df_mc_Q['year'].astype(str)
-    df_mc_Q['period']=df_mc_Q['quarter']+df_mc_Q['year']
-    #move col 'quarterYear' to the first col
-    cols = df_mc_Q.columns.tolist()
-    cols = cols[-1:] + cols[:-1]
-    df_mc_Q = df_mc_Q[cols]
-    #drop cols 'year' and 'quarter'
-    df_mc_Q.drop(columns=['year','quarter'], inplace=True)
-    #turn quarterYear to index
-    #df_mc_Q.set_index('quarterYear', inplace=True)
-    if period=='Q':
-        return df_mc_Q
+    # Lấy dữ liệu từ URL
+    response = requests.get(url)
+    data = response.json()['Data']
+    df = pd.DataFrame(data['Data'])
+    
+    # Tạo cột year, month, date dựa trên cột 'Ngay'
+    df[['date', 'month', 'year']] = df['Ngay'].str.split('/', expand=True)
+    df[['year', 'month', 'date']] = df[['year', 'month', 'date']].astype(int)
+    
+    # Tạo cột quarter
+    df['quarter'] = df['month'].apply(lambda x: (x-1)//3 + 1)
+    
+    # Lọc ra ngày giao dịch cuối cùng của mỗi quý
+    df_quarters = df[df['month'].isin([3, 6, 9, 12])]
+    df_last_days = df_quarters.groupby(['year', 'quarter']).apply(lambda x: x[x['date'] == x['date'].max()])
+    
+    # Chuyển đổi cột 'GiaDongCua' thành DataFrame và nhân với 10^3
+    df_close_price = pd.DataFrame(df_last_days['GiaDongCua'] * (10**3))
+    
+    # Đặt lại chỉ mục và xóa cột không cần thiết
+    df_close_price.reset_index(inplace=True)
+    df_close_price.drop(columns=['level_2'], inplace=True)
+    df_close_price.rename(columns={'GiaDongCua': 'closePrice'}, inplace=True)
+
+    return df_close_price
+
+
+def calculate_market_cap(symbol, period='Quarterly'):
+    df_number_of_shares = get_os(symbol)
+    df_close_price = get_price(symbol)
+    
+    # Kết hợp df_number_of_shares và df_close_price để tạo df_market_cap
+    df_market_cap = pd.merge(df_number_of_shares, df_close_price, on=['year', 'quarter'])
+    df_market_cap['market_cap'] = df_market_cap[symbol] * df_market_cap['closePrice']
+  
+    if period == 'Quarterly':
+        return df_market_cap
     else:
-        #keep only the tuples for Q4 of each year
-        df_mc_Y=df_mc_Q[df_mc_Q['period'].str.contains('Q4')]
-        #remove 'Q4' from the index
-        df_mc_Y['period']=df_mc_Y['period'].str.replace('Q4','')
-        # rename index to Year
-        #df_mc_Y.index.rename('Year', inplace=True)
-        return df_mc_Y
-
+        # Giữ lại các hàng thuộc quý 4 của mỗi năm
+        df_market_cap_yearly = df_market_cap[df_market_cap['quarter']==4]
+        return df_market_cap_yearly
