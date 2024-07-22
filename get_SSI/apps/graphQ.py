@@ -37,9 +37,11 @@ def add_data(ticker):
     ticker = ticker.upper()
     try:
         x = get_data_Q(ticker)
+        print(x)
         return x
     except:
         print('Có lỗi, xin nhập mã khác')
+add_data('VNM')
 
 layout = html.Div(children=[
     html.Header(children='Graph công ty thường Quý', className='ml-4',

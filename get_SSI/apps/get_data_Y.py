@@ -45,7 +45,6 @@ def add_ratios_Y(x):
     x['operating_EBITDA'] = x['op']+x['cf_dep']
     x['EBITDA'] = (x['Lãi/(lỗ) ròng trước thuế']-x['Thu nhập khác, ròng'] + x['cf_dep'] - x['Trong đó: Chi phí lãi vay'])
 
-
     return x
 
 col1 = ['Lãi gộp', 'op', 'EBT', 'Lãi/(lỗ) ròng trước thuế', 'Lãi/(lỗ) thuần sau thuế', 'Lợi nhuận của Cổ đông của Công ty mẹ', 'core_e','EBITDA']
@@ -90,22 +89,30 @@ def get_fs_Y(ticker):
     fs = add_ratios_Y(fs)
     fs = margin_func(fs)
     fs = g_func(fs)
-    fs['dates'] = fs.index.astype(int)
+    fs['year'] = fs.index.astype(int)
+    fs['dates'] = fs['year']
     return fs
+
 
 
 def get_data_Y(ticker):
     x = get_fs_Y(ticker)
     x = x.reset_index()
-    #rename columns 'index' to 'period'
     x = x.rename(columns={'index':'period'})
-    #remove space in 'period' column
     x['period'] = x['period'].str.replace(' ', '')
     x=pl.from_pandas(x)
-    y = get_mc(ticker,period='Y')
+    y = get_mc(ticker,period='Yearly')
     y=pl.from_pandas(y)
-    merged_df = x.join(y, on='period', how='inner')
-    merged_df = merged_df.with_columns((pl.col('marketCap')/pl.col('Lãi/(lỗ) thuần sau thuế_m')).alias('P/E'))
+    merged_df = x.join(y, on='year', how='inner')
+    merged_df = merged_df.with_columns((pl.col('marketCap')/pl.col('Lãi/(lỗ) thuần sau thuế')).alias('P/E'))
     merged_df = merged_df.with_columns((pl.col('marketCap')/pl.col('VỐN CHỦ SỞ HỮU')).alias('P/B'))
-    #merged_df = merged_df.with_columns([pl.col('dates').cast(pl.Utf8).alias('dates')])
+    # merged_df = merged_df.with_columns([(pl.col('dates').dt.strftime("%Y")).alias('dates')])
     return merged_df
+
+
+# import time
+# start_time = time.time()
+# print(get_fs_Y('VNM'))
+# end_time = time.time()
+# execution_time = end_time - start_time
+# print(f"Thời gian thực thi: {execution_time} giây")

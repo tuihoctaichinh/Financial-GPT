@@ -553,17 +553,17 @@ def get_price(ticker, period='Q'):
     return df_close_price
 
 
-def calculate_market_cap(symbol, period='Quarterly'):
+def get_mc(symbol, period='Quarterly'):
     df_number_of_shares = get_os(symbol)
     df_close_price = get_price(symbol)
-    
-    # Kết hợp df_number_of_shares và df_close_price để tạo df_market_cap
     df_market_cap = pd.merge(df_number_of_shares, df_close_price, on=['year', 'quarter'])
-    df_market_cap['market_cap'] = df_market_cap[symbol] * df_market_cap['closePrice']
-  
+    df_market_cap['marketCap'] = df_market_cap[symbol] * df_market_cap['closePrice']
+    #df['quarter'] as interger
+    df_market_cap['quarter'] = df_market_cap['quarter'].astype(int)
     if period == 'Quarterly':
         return df_market_cap
     else:
-        # Giữ lại các hàng thuộc quý 4 của mỗi năm
-        df_market_cap_yearly = df_market_cap[df_market_cap['quarter']==4]
-        return df_market_cap_yearly
+        df_market_cap = df_market_cap[df_market_cap['quarter']==4]
+        df_market_cap['quarter'] = 5
+        return df_market_cap
+

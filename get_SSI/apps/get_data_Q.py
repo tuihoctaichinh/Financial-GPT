@@ -99,7 +99,7 @@ def get_fs_Q(ticker):
     fs = ttm(fs)
     fs = g_func(fs)
     fs['year'] = fs.index.str[-4:].astype(int)
-    fs['quarter'] = fs.index.str[1].astype(float)
+    fs['quarter'] = fs.index.str[1].astype(int)
     fs['dates'] = pd.PeriodIndex(year=fs["year"], quarter=fs["quarter"])
     fs['dates'] = fs['dates'].dt.to_timestamp(freq='Q')
     fs = fs.sort_values(by='dates')
@@ -109,15 +109,14 @@ def get_fs_Q(ticker):
 def get_data_Q(ticker):
     x = get_fs_Q(ticker)
     x = x.reset_index()
-    #rename columns 'index' to 'period'
     x = x.rename(columns={'index':'period'})
-    #remove space in 'period' column
     x['period'] = x['period'].str.replace(' ', '')
     x=pl.from_pandas(x)
-    y = get_mc(ticker,period='Q')
+    y = get_mc(ticker,period='Quarterly')
     y=pl.from_pandas(y)
-    merged_df = x.join(y, on='period', how='inner')
+    merged_df = x.join(y, on=['year','quarter'], how='inner')
     merged_df = merged_df.with_columns((pl.col('marketCap')/pl.col('Lãi/(lỗ) thuần sau thuế_4Q')).alias('P/E'))
     merged_df = merged_df.with_columns((pl.col('marketCap')/pl.col('VỐN CHỦ SỞ HỮU')).alias('P/B'))
-    #merged_df = merged_df.with_columns([(pl.col('dates').dt.strftime("%Y")).alias('dates')])
+    # merged_df = merged_df.with_columns([(pl.col('dates').dt.strftime("%Y-%m")).alias('dates')])
     return merged_df
+
