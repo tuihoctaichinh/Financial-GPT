@@ -103,7 +103,7 @@ def get_data_Y(ticker):
     x=pl.from_pandas(x)
     y = get_mc(ticker,period='Yearly')
     y=pl.from_pandas(y)
-    merged_df = x.join(y, on='year', how='inner')
+    merged_df = x.join(y, on='year', how='outer')
     merged_df = merged_df.with_columns((pl.col('marketCap')/pl.col('Lãi/(lỗ) thuần sau thuế')).alias('P/E'))
     merged_df = merged_df.with_columns((pl.col('marketCap')/pl.col('VỐN CHỦ SỞ HỮU')).alias('P/B'))
     # merged_df = merged_df.with_columns([(pl.col('dates').dt.strftime("%Y")).alias('dates')])
