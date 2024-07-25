@@ -37,7 +37,6 @@ def add_data(ticker):
     ticker = ticker.upper()
     try:
         x = get_data_Q(ticker)
-        print(x)
         return x
     except:
         print('Có lỗi, xin nhập mã khác')
@@ -187,10 +186,10 @@ def asset(dat):
     asset_bar8 = go.Scatter(y=chart.select(pl.col("ca/ta")).to_series(), x=date, yaxis='y2',
                             name="TS ngắn hạn/Tổng tài sản", line=dict(color='deeppink', width=3, dash='dot'),
                             mode='lines',line_shape='spline')
-    # asset_bar9 = go.Scatter(y=chart.select(pl.col("mc")).to_series(), x=date, yaxis='y', name="Vốn hóa",
-    #                         line=dict(color='darkturquoise', width=3), mode='lines+markers')
+    asset_bar9 = go.Scatter(y=chart.select(pl.col("marketCap")).to_series(), x=date, yaxis='y', name="Vốn hóa",
+                            line=dict(color='darkturquoise', width=3), mode='lines+markers')
     asset_data = [asset_bar1, asset_bar2, asset_bar3, asset_bar4, asset_bar5, asset_bar6, asset_bar7,asset_bar8
-                #   , asset_bar9
+                  , asset_bar9
                   ]
 
     fig = go.Figure(data=asset_data,layout=go.Layout(barmode='relative'
@@ -233,13 +232,13 @@ def equity(dat):
     asset_bar9 = go.Bar(y=chart.select(pl.col("other_lia")).to_series(), x=date, name="Nợ khác",
                         marker=dict(color=('darkgray')))
 
-    # asset_bar10 = go.Scatter(y=chart.select(pl.col("mc")).to_series(), x=date, name="Vốn hóa",
-    #                          line=dict(color='darkturquoise', width=3), mode='lines+markers')
+    asset_bar10 = go.Scatter(y=chart.select(pl.col("marketCap")).to_series(), x=date, name="Vốn hóa",
+                             line=dict(color='darkturquoise', width=3), mode='lines+markers')
     asset_bar11 = go.Scatter(y=chart.select(pl.col("de")).to_series(), x=date, yaxis='y2', name="D/E",
                              line=dict(color='deeppink', width=3, dash='dot'), mode='lines',line_shape='spline')
     asset_data = [asset_bar1, asset_bar2, asset_bar3, asset_bar4, asset_bar5, asset_bar6, asset_bar7, asset_bar8,
                   asset_bar9, 
-                #   asset_bar10, 
+                  asset_bar10, 
                   asset_bar11]
 
     fig = go.Figure(data=asset_data,layout=go.Layout(barmode='relative'
